@@ -44,7 +44,20 @@ div {
 .back-btn {
     position: fixed;
     top: 20px;
-    left: 20px;
+    left: 5%;
+    width: 40px;
+    height: 40px;
+    background-color: black;
+    border-radius: 50%;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.redo-btn{
+    position: fixed;
+    top: 20px;
+    left: 90%;
     width: 40px;
     height: 40px;
     background-color: black;

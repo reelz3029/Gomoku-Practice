@@ -1,17 +1,55 @@
 class Table {
 
-    stones = [];
+    tableStones = [];
+    backedStone = [];
 
     constructor(turnIndex){
         this.turnIndex = turnIndex;
     }
 
-    setNewStone(newStone){
-        this.stones.push(newStone); ;
+    setNewStone(e) {
+
+        const newStone = new Stone(document.createElement("div"), e.target.dataset.x, e.target.dataset.y, this.turnIndex);
+
+        this.backedStone = [];
+
+        this.setStone(newStone);    
+    }
+
+    setStone(stone) {
+
+        this.plusTurn();
+
+        const somethign = document.querySelector(`.board-interaction[data-x='${stone.x}'][data-y='${stone.y}']`).appendChild(stone.element);
+
+        console.log(somethign);
+
+        this.tableStones.push(stone);
+
+    }
+
+    undoStone(e) {
+        if (this.turnIndex === 0) return;
+
+        const lastStone = this.tableStones.pop();
+
+        this.minusTurn();
+        this.backedStone.push(lastStone);
+        lastStone.element.remove();
+    }
+
+    redoStone(e) {
+        if(this.backedStone.length === 0) return;
+
+        const thisStone = this.backedStone.pop();
+        console.log(thisStone);
+        
+        this.setStone(thisStone);
+
     }
 
     getTurn(){
-        return this.turn;
+        return this.turnIndex;
     }
 
     plusTurn(){
@@ -38,28 +76,4 @@ class Stone {
 
 }
 
-const table = new Table(0);
-
-export function gameDefaultSetting(){
-
-    
-}
-
-export function setStone(e){
-    
-    let newStone = new Stone(document.createElement("div"), e.target.dataset.x, e.target.dataset.y, table.turnIndex);
-
-    table.plusTurn();
-    table.setNewStone(newStone);
-
-    e.target.appendChild(newStone.element);
-
-    console.log(table.stones);
-}
-
-export function backToPreviousState(){
-    if(table.turnIndex === 0) return;
-
-    table.minusTurn();
-    table.stones.pop().element.remove();
-}
+export var gameTable  = new Table(0);

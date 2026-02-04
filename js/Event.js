@@ -1,15 +1,25 @@
-export function BoardInteraction(bindFunction) {
+import { gameTable } from './game.js';
+
+export function BindSetStone() {
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('board-interaction')) {
-            bindFunction(e);   
+            gameTable.setNewStone(e);   
         }
     });
 }
 
-export function BackFunction(bindFunction) {
+export function BindUndoStone() {
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('back-btn')) {
-            bindFunction(e);   
+            gameTable.undoStone(e);   
+        }
+    });
+}
+
+export function BindRedoStone() {
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('redo-btn')) {
+            gameTable.redoStone(e);   
         }
     });
 }
