@@ -31,7 +31,3 @@ export function DrawBoardInteraction() {
         }
     }
 }
-
-export function getInteractionContainer() {
-    return interactionContainer;
-}

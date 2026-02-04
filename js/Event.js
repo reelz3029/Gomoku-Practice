@@ -5,3 +5,11 @@ export function BoardInteraction(bindFunction) {
         }
     });
 }
+
+export function BackFunction(bindFunction) {
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('back-btn')) {
+            bindFunction(e);   
+        }
+    });
+}

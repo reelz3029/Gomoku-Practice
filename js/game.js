@@ -1,38 +1,65 @@
-import {getInteractionContainer} from './Draw.js';
-
-let currentGameTurn = 0;
-let tableInfo = [];
-
 class Table {
-    constructor(x, y, isValidStone, turn){
-        this.x = x;
-        this.y = y;
-        this.isValidStone = isValidStone;
-        this.turn = turn;
+
+    stones = [];
+
+    constructor(turnIndex){
+        this.turnIndex = turnIndex;
+    }
+
+    setNewStone(newStone){
+        this.stones.push(newStone); ;
+    }
+
+    getTurn(){
+        return this.turn;
+    }
+
+    plusTurn(){
+        this.turnIndex += 1;
+    }
+    minusTurn(){
+        this.turnIndex -= 1;
     }
 }
 
+class Stone {
+    constructor(element = document.createElement("div"), x = 0, y = 0, turnIndex = 1){
+        this.element = element;
+        this.x = x;
+        this.y = y;
+        this.turnIndex = turnIndex;
+
+        this.setStoneColor();
+    }     
+
+    setStoneColor() {
+        this.turnIndex % 2 === 0 ? this.element.className = "stone black-stone" : this.element.className = "stone white-stone";
+    }
+
+}
+
+const table = new Table(0);
+
 export function gameDefaultSetting(){
-    defaultStoneSet();
+
+    
 }
 
 export function setStone(e){
-    console.log(e.target);
+    
+    let newStone = new Stone(document.createElement("div"), e.target.dataset.x, e.target.dataset.y, table.turnIndex);
 
-    currentGameTurn += 1;
+    table.plusTurn();
+    table.setNewStone(newStone);
 
-    let element = document.createElement("div");
-    element.className = currentGameTurn % 2 === 1 ? "stone black-stone" : "stone white-stone";
-    e.target.appendChild(element);
+    e.target.appendChild(newStone.element);
+
+    console.log(table.stones);
 }
 
-function defaultStoneSet(){
+export function backToPreviousState(){
+    if(table.turnIndex === 0) return;
 
-    for(let i = 0; i < 15; i++){
-        for(let j = 0; j < 15; j++){
-            tableInfo.push(new Table(i, j, false, -1));
-        }
-    }
-
-    console.log(tableInfo);
+    table.minusTurn();
+    table.stones.pop().element.remove();
 }
