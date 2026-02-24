@@ -35,9 +35,9 @@ export function DrawBoardInteraction() {
 export function DrawBoardDots() {
     // 실제 오목판 화점(花點) 위치: 3, 7(천원), 11
     const starPoints = [
-        [3, 3], [3, 7], [3, 11],
+        [3, 3], [3, 11],
         [7, 3], [7, 7], [7, 11],
-        [11, 3], [11, 7], [11, 11],
+        [11, 3], [11, 11],
     ];
 
     for (const [row, col] of starPoints) {
