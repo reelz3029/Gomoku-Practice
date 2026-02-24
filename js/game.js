@@ -74,7 +74,8 @@ class Table {
         this.renjuEnabled = !this.renjuEnabled;
         const btn = document.querySelector('.renju-btn');
         if (btn) {
-            btn.textContent = `렌주 금수: ${this.renjuEnabled ? 'ON' : 'OFF'}`;
+            const span = btn.querySelector('span');
+            if (span) span.textContent = `렌주 금수: ${this.renjuEnabled ? 'ON' : 'OFF'}`;
             btn.classList.toggle('renju-off', !this.renjuEnabled);
         }
         this.updateForbiddenMarkers();

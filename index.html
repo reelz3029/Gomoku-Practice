@@ -14,9 +14,31 @@
         </div>
     </div>
 
-    <div class="back-btn" title="무르기"></div>
-    <div class="redo-btn" title="다시하기"></div>
-    <button class="renju-btn">렌주 금수: ON</button>
+    <div class="toolbar">
+        <button class="tool-btn back-btn" title="무르기">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 14L4 9l5-5"/>
+                <path d="M4 9h11a5 5 0 0 1 0 10H12"/>
+            </svg>
+            <span>무르기</span>
+        </button>
+
+        <button class="tool-btn renju-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M9 12l2 2 4-4"/>
+            </svg>
+            <span>렌주 금수: ON</span>
+        </button>
+
+        <button class="tool-btn redo-btn" title="다시하기">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 14l5-5-5-5"/>
+                <path d="M20 9H9a5 5 0 0 0 0 10h3"/>
+            </svg>
+            <span>다시하기</span>
+        </button>
+    </div>
 
     <script type="module" src="main.js"></script>
 </body>
