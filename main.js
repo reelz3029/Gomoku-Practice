@@ -1,10 +1,11 @@
-import { DrawBoardGrid, DrawBoardInteraction } from './js/Draw.js';
+import { DrawBoardGrid, DrawBoardInteraction, DrawBoardDots } from './js/Draw.js';
 import { BindSetStone, BindUndoStone, BindRedoStone, BindRenjuToggle } from './js/Event.js';
 import { gameTable } from './js/game.js';
 
 /** Default drawing on table */
 DrawBoardGrid();
-DrawBoardInteraction(); 
+DrawBoardInteraction();
+DrawBoardDots();
 
 /** Default event binding */
 BindSetStone();

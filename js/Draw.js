@@ -31,3 +31,20 @@ export function DrawBoardInteraction() {
         }
     }
 }
+
+export function DrawBoardDots() {
+    // 실제 오목판 화점(花點) 위치: 3, 7(천원), 11
+    const starPoints = [
+        [3, 3], [3, 7], [3, 11],
+        [7, 3], [7, 7], [7, 11],
+        [11, 3], [11, 7], [11, 11],
+    ];
+
+    for (const [row, col] of starPoints) {
+        const dot = document.createElement("div");
+        dot.className = "board-dot";
+        dot.style.top  = (row * 7.14286) + "%";
+        dot.style.left = (col * 7.14286) + "%";
+        document.querySelector(".board-grid-container").appendChild(dot);
+    }
+}
