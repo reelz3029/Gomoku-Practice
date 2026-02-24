@@ -10,7 +10,7 @@ export function BindSetStone() {
 
 export function BindUndoStone() {
     document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('back-btn')) {
+        if (e.target.closest('.back-btn')) {
             gameTable.undoStone(e);   
         }
     });
@@ -18,7 +18,7 @@ export function BindUndoStone() {
 
 export function BindRedoStone() {
     document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('redo-btn')) {
+        if (e.target.closest('.redo-btn')) {
             gameTable.redoStone(e);   
         }
     });
@@ -26,7 +26,7 @@ export function BindRedoStone() {
 
 export function BindRenjuToggle() {
     document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('renju-btn')) {
+        if (e.target.closest('.renju-btn')) {
             gameTable.toggleRenju();
         }
     });
