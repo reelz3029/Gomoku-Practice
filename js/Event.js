@@ -23,3 +23,11 @@ export function BindRedoStone() {
         }
     });
 }
+
+export function BindRenjuToggle() {
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('renju-btn')) {
+            gameTable.toggleRenju();
+        }
+    });
+}

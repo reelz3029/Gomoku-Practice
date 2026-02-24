@@ -1,12 +1,16 @@
 import { DrawBoardGrid, DrawBoardInteraction } from './js/Draw.js';
-import { BindSetStone, BindUndoStone, BindRedoStone } from './js/Event.js';
+import { BindSetStone, BindUndoStone, BindRedoStone, BindRenjuToggle } from './js/Event.js';
+import { gameTable } from './js/game.js';
 
 /** Default drawing on table */
 DrawBoardGrid();
 DrawBoardInteraction(); 
 
-
 /** Default event binding */
 BindSetStone();
 BindUndoStone();
 BindRedoStone();
+BindRenjuToggle();
+
+/** 초기 금수 마커 표시 */
+gameTable.updateForbiddenMarkers();
