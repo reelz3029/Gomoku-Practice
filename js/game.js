@@ -1,23 +1,31 @@
 import { buildBoard, checkWin, isForbiddenMove, BLACK, WHITE, EMPTY } from './rule.js';
+import { MP, sendAction } from './multi.js';
 
 class Table {
 
     tableStones = [];
     backedStone = [];
     renjuEnabled = true;
+    localRole = null; // null=로컬, 'black'=흑, 'white'=백
 
     constructor(turnIndex){
         this.turnIndex = turnIndex;
     }
 
-    // turnIndex가 짝수(0,2,4...) → 흑, 홀수(1,3,5...) → 백
-    // (놓기 전 turnIndex 기준)
     getNextColor() {
         return this.turnIndex % 2 === 0 ? BLACK : WHITE;
     }
 
-    // ── 돌 놓기 ──────────────────────────────────────────
+    isMyTurn() {
+        if (!MP.active || this.localRole === null) return true;
+        const nextColor = this.getNextColor();
+        return (this.localRole === 'black' && nextColor === BLACK)
+            || (this.localRole === 'white' && nextColor === WHITE);
+    }
+
     setNewStone(e) {
+        if (!this.isMyTurn()) return;
+
         const x = parseInt(e.target.dataset.x);
         const y = parseInt(e.target.dataset.y);
 
@@ -26,23 +34,43 @@ class Table {
 
         const color = this.getNextColor();
 
-        // 흑 차례이고 렌주 ON이면 금수 클릭 차단
         if (this.renjuEnabled && color === BLACK) {
             const { forbidden } = isForbiddenMove(board, x, y);
             if (forbidden) return;
         }
 
+        if (MP.active) sendAction({ type: 'place', x, y });
+
         const newStone = new Stone(document.createElement("div"), x, y, color);
         this.backedStone = [];
         this.setStone(newStone);
 
-        // 승리 체크
         const newBoard = buildBoard(this.tableStones);
         if (checkWin(newBoard, x, y, color)) {
             const winner = color === BLACK ? '흑' : '백';
             setTimeout(() => this.showWinMessage(winner), 50);
         } else {
             this.updateForbiddenMarkers();
+            this.updateTurnIndicator();
+        }
+    }
+
+    placeRemoteStone(x, y) {
+        const board = buildBoard(this.tableStones);
+        if (board[x][y] !== EMPTY) return;
+
+        const color = this.getNextColor();
+        const newStone = new Stone(document.createElement("div"), x, y, color);
+        this.backedStone = [];
+        this.setStone(newStone);
+
+        const newBoard = buildBoard(this.tableStones);
+        if (checkWin(newBoard, x, y, color)) {
+            const winner = color === BLACK ? '흑' : '백';
+            setTimeout(() => this.showWinMessage(winner), 50);
+        } else {
+            this.updateForbiddenMarkers();
+            this.updateTurnIndicator();
         }
     }
 
@@ -54,24 +82,56 @@ class Table {
 
     undoStone(e) {
         if (this.turnIndex === 0) return;
+        if (MP.active) {
+            const last = this.tableStones[this.tableStones.length - 1];
+            const myColor = this.localRole === 'black' ? BLACK : WHITE;
+            if (!last || last.color !== myColor) return;
+            sendAction({ type: 'undo' });
+        }
+        this._doUndo();
+    }
+
+    undoRemote() { this._doUndo(); }
+
+    _doUndo() {
+        if (this.turnIndex === 0) return;
         const lastStone = this.tableStones.pop();
         this.minusTurn();
         this.backedStone.push(lastStone);
         lastStone.element.remove();
         this.hideMessage();
         this.updateForbiddenMarkers();
+        this.updateTurnIndicator();
     }
 
     redoStone(e) {
         if (this.backedStone.length === 0) return;
+        if (MP.active) sendAction({ type: 'redo' });
+        this._doRedo();
+    }
+
+    redoRemote() { this._doRedo(); }
+
+    _doRedo() {
+        if (this.backedStone.length === 0) return;
         const thisStone = this.backedStone.pop();
         this.setStone(thisStone);
         this.updateForbiddenMarkers();
+        this.updateTurnIndicator();
     }
 
-    // ── 렌주 토글 ────────────────────────────────────────
     toggleRenju() {
         this.renjuEnabled = !this.renjuEnabled;
+        if (MP.active) sendAction({ type: 'renju', enabled: this.renjuEnabled });
+        this._applyRenju();
+    }
+
+    setRenju(enabled) {
+        this.renjuEnabled = enabled;
+        this._applyRenju();
+    }
+
+    _applyRenju() {
         const btn = document.querySelector('.renju-btn');
         if (btn) {
             const span = btn.querySelector('span');
@@ -81,17 +141,41 @@ class Table {
         this.updateForbiddenMarkers();
     }
 
-    // ── 금수 X 마커 갱신 ─────────────────────────────────
+    resetGame(role) {
+        this.tableStones.forEach(s => s.element.remove());
+        this.backedStone.forEach(s => s.element.remove());
+        this.tableStones = [];
+        this.backedStone = [];
+        this.turnIndex = 0;
+        this.localRole = role;
+        this.hideMessage();
+        this.updateForbiddenMarkers();
+        this.updateTurnIndicator();
+    }
+
+    updateTurnIndicator() {
+        const indicator = document.querySelector('.turn-indicator');
+        if (!indicator) return;
+
+        const nextColor = this.getNextColor();
+        const isBlack = nextColor === BLACK;
+
+        if (MP.active) {
+            const myTurn = this.isMyTurn();
+            indicator.textContent = myTurn ? '🔵 내 차례' : '⏳ 상대방 차례';
+            indicator.className = 'turn-indicator ' + (myTurn ? 'my-turn' : 'wait-turn');
+        } else {
+            indicator.textContent = isBlack ? '⚫ 흑돌 차례' : '⚪ 백돌 차례';
+            indicator.className = 'turn-indicator ' + (isBlack ? 'black-turn' : 'white-turn');
+        }
+    }
+
     updateForbiddenMarkers() {
-        // 기존 마커 전부 제거
         document.querySelectorAll('.forbidden-marker').forEach(el => {
             el.parentElement?.removeAttribute('data-forbidden-reason');
             el.remove();
         });
 
-        // 렌주 OFF이거나 다음 차례가 백이면 표시 안 함
-        // setStone()에서 plusTurn()을 호출하므로, 이 시점의 turnIndex는 이미 +1된 상태
-        // 짝수 → 다음은 흑 차례
         const nextIsBlack = this.turnIndex % 2 === 0;
         if (!this.renjuEnabled || !nextIsBlack) return;
 
@@ -114,7 +198,6 @@ class Table {
         }
     }
 
-    // ── 승리 메시지 ──────────────────────────────────────
     showWinMessage(winner) {
         document.querySelectorAll('.forbidden-marker').forEach(el => el.remove());
 

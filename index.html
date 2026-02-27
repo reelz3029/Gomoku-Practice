@@ -1,43 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gomoku</title>
+    <link id="styles" rel="stylesheet" href="style.css" />
 </head>
-<link id="styles" rel="stylesheet" href="style.css" />
 <body>
+
+    <!-- 차례 표시 -->
+    <div class="turn-indicator black-turn">⚫ 흑돌 차례</div>
+
+    <!-- 오목판 -->
     <div class="game-board-container">
         <div class="game-board">
-            <div class="board-grid-container">
-            </div>
+            <div class="board-grid-container"></div>
         </div>
     </div>
 
+    <!-- 툴바 -->
     <div class="toolbar">
         <button class="tool-btn back-btn" title="무르기">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 14L4 9l5-5"/>
-                <path d="M4 9h11a5 5 0 0 1 0 10H12"/>
+                <path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10H12"/>
             </svg>
             <span>무르기</span>
         </button>
 
         <button class="tool-btn renju-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"/>
-                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/>
             </svg>
             <span>렌주 금수: ON</span>
         </button>
 
         <button class="tool-btn redo-btn" title="다시하기">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 14l5-5-5-5"/>
-                <path d="M20 9H9a5 5 0 0 0 0 10h3"/>
+                <path d="M15 14l5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/>
             </svg>
             <span>다시하기</span>
         </button>
+
+        <button class="tool-btn multi-btn" id="multi-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="7" r="3"/><circle cx="17" cy="7" r="3"/>
+                <path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                <path d="M19 11v6m-3-3h6"/>
+            </svg>
+            <span>멀티플레이</span>
+        </button>
+    </div>
+
+    <!-- 멀티플레이 모달 -->
+    <div id="mp-modal" class="mp-modal">
+        <div class="mp-panel">
+            <button class="mp-close-btn" id="mp-close-btn">&#x2715;</button>
+            <h2 class="mp-title">멀티플레이</h2>
+            <p class="mp-status"></p>
+
+            <!-- 로비 -->
+            <div id="mp-screen-lobby" class="mp-screen active">
+                <p class="mp-desc">친구와 함께 오목을 즐겨보세요.<br>방을 만들거나 방 코드로 참가하세요.</p>
+                <button class="mp-action-btn primary" id="mp-create-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 5v14M5 12h14"/></svg>
+                    방 만들기 (흑돌 · 선공)
+                </button>
+                <div class="mp-divider"><span>또는</span></div>
+                <div class="mp-join-row">
+                    <input id="mp-room-input" class="mp-input" type="text" placeholder="방 코드 입력" maxlength="36" autocomplete="off"/>
+                    <button class="mp-action-btn" id="mp-join-btn">참가</button>
+                </div>
+            </div>
+
+            <!-- 대기 (방장) -->
+            <div id="mp-screen-waiting" class="mp-screen">
+                <p class="mp-desc">아래 코드를 친구에게 공유하세요.</p>
+                <div class="mp-code-box">
+                    <span class="room-code-display">—</span>
+                    <button class="mp-copy-btn" id="mp-copy-btn">복사</button>
+                </div>
+                <p class="mp-hint">상대방이 참가하면 게임이 자동으로 시작됩니다.</p>
+                <button class="mp-action-btn danger mp-leave-btn">취소</button>
+            </div>
+
+            <!-- 게임 중 -->
+            <div id="mp-screen-game" class="mp-screen">
+                <p class="mp-desc">게임이 진행 중입니다!</p>
+                <button class="mp-action-btn secondary" id="mp-close-game-btn">창 닫기</button>
+                <button class="mp-action-btn danger mp-leave-btn">게임 나가기</button>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="main.js"></script>
