@@ -81,13 +81,10 @@ class Table {
     }
 
     undoStone(e) {
+        // 멀티 모드에서는 방장만 사용 가능
+        if (MP.active && MP.role !== 'host') return;
         if (this.turnIndex === 0) return;
-        if (MP.active) {
-            const last = this.tableStones[this.tableStones.length - 1];
-            const myColor = this.localRole === 'black' ? BLACK : WHITE;
-            if (!last || last.color !== myColor) return;
-            sendAction({ type: 'undo' });
-        }
+        if (MP.active) sendAction({ type: 'undo' });
         this._doUndo();
     }
 
@@ -105,6 +102,8 @@ class Table {
     }
 
     redoStone(e) {
+        // 멀티 모드에서는 방장만 사용 가능
+        if (MP.active && MP.role !== 'host') return;
         if (this.backedStone.length === 0) return;
         if (MP.active) sendAction({ type: 'redo' });
         this._doRedo();
@@ -121,6 +120,8 @@ class Table {
     }
 
     toggleRenju() {
+        // 멀티 모드에서는 방장만 사용 가능
+        if (MP.active && MP.role !== 'host') return;
         this.renjuEnabled = !this.renjuEnabled;
         if (MP.active) sendAction({ type: 'renju', enabled: this.renjuEnabled });
         this._applyRenju();
@@ -151,6 +152,23 @@ class Table {
         this.hideMessage();
         this.updateForbiddenMarkers();
         this.updateTurnIndicator();
+        this.updateHostControls();
+    }
+
+    // 방장만 쓸 수 있는 버튼 — 게스트일 때 비활성화
+    updateHostControls() {
+        const isGuest = MP.active && MP.role === 'guest';
+        const btns = [
+            document.querySelector('.back-btn'),
+            document.querySelector('.redo-btn'),
+            document.querySelector('.renju-btn'),
+        ];
+        btns.forEach(btn => {
+            if (!btn) return;
+            btn.disabled = isGuest;
+            btn.classList.toggle('btn-disabled', isGuest);
+            btn.title = isGuest ? '방장만 사용할 수 있습니다' : '';
+        });
     }
 
     updateTurnIndicator() {

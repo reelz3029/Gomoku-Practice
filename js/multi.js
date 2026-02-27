@@ -139,7 +139,7 @@ function leaveRoom() {
     MP.active = false;
     showScreen('mp-screen-lobby');
     setStatus('');
-    gameTable.resetGame(null);
+    gameTable.resetGame(null); // resetGame 내부에서 updateHostControls 호출됨
 }
 
 // ── 멀티 모달 초기화 ──────────────────────────────────────
