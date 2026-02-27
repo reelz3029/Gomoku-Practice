@@ -1,5 +1,5 @@
 import { buildBoard, checkWin, isForbiddenMove, BLACK, WHITE, EMPTY } from './rule.js';
-import { MP, sendAction } from './multi.js';
+import { MP, sendAction } from './state.js';
 
 class Table {
 
