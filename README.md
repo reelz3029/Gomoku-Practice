@@ -1,1 +1,1 @@
-#Site for multiplay : gomokuprmulti.netlify.app
+# Site for multiplay : gomokuprmulti.netlify.app
